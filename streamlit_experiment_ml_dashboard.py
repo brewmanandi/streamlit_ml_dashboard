@@ -1,15 +1,14 @@
+import matplotlib.pyplot as plt
+import scikitplot as skplt
 import streamlit as st
-
+from joblib import dump, load
 from sklearn import datasets
-from sklearn.model_selection import train_test_split
-from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.decomposition import PCA
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import confusion_matrix, accuracy_score, classification_report
-
-import scikitplot as skplt
-from joblib import dump, load
-import matplotlib.pyplot as plt
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.metrics import (accuracy_score, classification_report,
+                             confusion_matrix)
+from sklearn.model_selection import train_test_split
 
 categories = ['alt.atheism', 'comp.graphics', 'rec.autos', 'sci.electronics', 'talk.politics.guns',]
 
@@ -41,9 +40,9 @@ with st.form("train_model"):
     col1, col2 = st.columns(2, gap="medium")
 
     with col1:
-        n_estimators = st.slider("No of Estimators:", min_value=100, max_value=1000)
-        max_depth = st.slider("Max Depth:", min_value=2, max_value=20)
-        max_features = st.selectbox("Max Features :", options=["sqrt", "log2", None])
+        n_estimators = st.slider("No of Estimators", min_value=100, max_value=1000)
+        max_depth = st.slider("Max Depth", min_value=2, max_value=20)
+        max_features = st.selectbox("Max Features", options=["sqrt", "log2", None])
         bootstrap = st.checkbox("Bootstrap")
         save_model = st.checkbox("Save Model")
 
@@ -53,7 +52,9 @@ with st.form("train_model"):
         rf_classif = train_model(n_estimators, max_depth, max_features, bootstrap)
 
         if save_model:
-            dump(rf_classif, "rf_classif.dat")
+            file_name = "rf_classif.dat"
+            dump(rf_classif, file_name)
+            st.toast(f"Model Saved Successfully to {file_name}!", icon="💾")
 
         Y_test_preds = rf_classif.predict(X_test_vec)
         Y_train_preds = rf_classif.predict(X_train_vec)
@@ -90,3 +91,11 @@ with st.form("train_model"):
             st.pyplot(pr_fig, use_container_width=True)
 
 
+
+hide_streamlit_style = """
+<style>
+    #root > div:nth-child(1) > div > div > div > div > section > div {padding-top: 1rem;}
+</style>
+
+"""
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
