@@ -32,7 +32,7 @@ EXPOSE 8501
 
 COPY . .
 
-CMD ["streamlit", "run", "stocks.py"]
+CMD ["streamlit", "run", "streamlit_experiment_ml_dashboard.py"]
 
 # Some docker commands see below:
 # docker build --progress=plain --tag streamlit:latest .
