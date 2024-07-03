@@ -47,7 +47,7 @@ def train_models(n_estimators, max_depth, max_features, bootstrap):
 
 ## Dashboard
 st.title("Classifier :green[Experiments] :tea: :coffee:")
-st.markdown("Try different meta parameters. Select widget values and submit model for training. Various ML metrics will be displayed after training.")
+st.markdown("Try different meta parameters. Select widget values and submit model for training. Various ML metrics will be displayed after training. Change any value to retrain.")
 
 
 if 'submitted' not in st.session_state:
@@ -85,7 +85,7 @@ if st.session_state.submitted:
     columns = st.columns(len(models), gap="medium")
     for i, model in enumerate(models):
         with columns[i]:
-            st.markdown(f"# Model: {model.__class__.__name__}")
+            st.markdown(f"# {model.__class__.__name__}")
             Y_test_preds = model.predict(X_test_vec)
             Y_train_preds = model.predict(X_train_vec)
             Y_test_probs = model.predict_proba(X_test_vec)
