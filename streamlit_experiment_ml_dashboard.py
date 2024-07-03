@@ -45,8 +45,18 @@ def train_models(n_estimators, max_depth, max_features, min_samples_split, min_s
     models.append(GradientBoostingClassifier(n_estimators=n_estimators, max_depth=max_depth, max_features=max_features, min_samples_split=min_samples_split, min_samples_leaf=min_samples_leaf, max_leaf_nodes=max_leaf_nodes, min_impurity_decrease=min_impurity_decrease))
 
     # Fit each model
-    for model in models:
-        model.fit(X_train_vec, Y_train)
+    # Assuming `models` is a list of model instances
+    total_models = len(models)
+    progress_bar = st.progress(0)
+
+    for index, model in enumerate(models):
+        progress_percent = int((index / total_models) * 100)
+        with st.spinner(f"Training model {model.__class__.__name__}, please wait..."):
+            model.fit(X_train_vec, Y_train)
+        progress_bar.progress(progress_percent + int(1/total_models * 100))
+
+    # Complete the progress after all models are trained
+    progress_bar.progress(100)
 
 ## Dashboard
 st.title("Classifier :green[Experiments] :tea: :coffee:")
@@ -77,23 +87,23 @@ with col2:
 
 if st.session_state.submitted:
     with col2:
-        with st.spinner('Training models, please wait...'):
-            models = []
-            train_models(n_estimators, max_depth, max_features, min_samples_split, min_samples_leaf, max_leaf_nodes, min_impurity_decrease)
-            st.success('Model training completed!')
+        
+        models = []
+        train_models(n_estimators, max_depth, max_features, min_samples_split, min_samples_leaf, max_leaf_nodes, min_impurity_decrease)
+        st.success('Model training completed!')
 
-            file_name = "models.dat"
-            buffer = BytesIO()
-            joblib.dump(models, buffer)
-            buffer.seek(0)
+        file_name = "models.dat"
+        buffer = BytesIO()
+        joblib.dump(models, buffer)
+        buffer.seek(0)
 
-            st.download_button(
-                label="Download Models",
-                data=buffer,
-                file_name="models.pkl",
-                mime="application/octet-stream"
-            )
-            st.toast(f"Models Successfully Downloaded!", icon="💾")            
+        st.download_button(
+            label="Download Models",
+            data=buffer,
+            file_name="models.pkl",
+            mime="application/octet-stream"
+        )
+        st.toast(f"Models Successfully Downloaded!", icon="💾")            
 
     
     if len(models) > 0:
